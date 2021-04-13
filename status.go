@@ -17,6 +17,7 @@ type Status struct {
 	Host    map[string]Host               `json:"host"`
 	Service map[string]map[string]Service `json:"service"`
 	Summary Summary                       `json:"summary"`
+	Info    Info                          `json:"info"`
 	sync.RWMutex
 }
 
@@ -61,6 +62,12 @@ func LoadStatus(r io.Reader) (Status, error) {
 					return status, err
 				}
 
+			} else if block_type == "info" {
+				i, err := NewInfoFromMap(block_content)
+				if err != nil {
+					return status, err
+				}
+				status.Info = i
 			}
 			//end of block summary ,cleanup vars
 			block_type = ""
